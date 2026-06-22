@@ -1,0 +1,6 @@
+{
+  "name": "Click boost Media",
+  "description": "Agencia moderna de diseño de páginas web con IA y publicidad digital.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
