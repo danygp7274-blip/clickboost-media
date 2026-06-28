@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { motion, useScroll, useSpring } from "motion/react";
+import { motion, useScroll, useSpring, AnimatePresence } from "motion/react";
 import { Sparkles, Megaphone, ArrowUpRight, Zap, Cpu, Check, Download, AlertTriangle, ArrowRight, Layers, Target, Coins, Gauge, Globe, Instagram, Linkedin, Mail, Phone, MapPin, MessageSquare } from "lucide-react";
 import ContactFormModal from "./components/ContactFormModal";
 import SupportChat from "./components/SupportChat";
@@ -9,6 +9,12 @@ import VideoTestimonialsSection from "./components/VideoTestimonialsSection";
 import ProjectsSection from "./components/ProjectsSection";
 import FastTrackModal from "./components/FastTrackModal";
 import { translations, Language } from "./translations";
+
+// Import custom pages
+import ServiciosPage from "./components/ServiciosPage";
+import PreciosPage from "./components/PreciosPage";
+import ContactoPage from "./components/ContactoPage";
+import SystemConnectionBackground from "./components/SystemConnectionBackground";
 
 // Animation variants for Staggered Fade-In of cards and list features
 const pricingGridVariants = {
@@ -69,12 +75,18 @@ export default function App() {
   });
 
   const [lang, setLang] = useState<Language>("es");
+  const [currentPage, setCurrentPage] = useState<"inicio" | "servicios" | "precios" | "contacto">("inicio");
   const [isContactOpen, setIsContactOpen] = useState(false);
   const [activeInteractiveTab, setActiveInteractiveTab] = useState<"ai-web" | "ads">("ai-web");
   const [newsletterEmail, setNewsletterEmail] = useState("");
   const [newsletterSuccess, setNewsletterSuccess] = useState(false);
   const [currency, setCurrency] = useState<"USD" | "MXN">("USD");
   const EXCHANGE_RATE = 18.5; // Tipo de cambio simulado: 1 USD = 18.50 MXN
+
+  const navigateTo = (page: "inicio" | "servicios" | "precios" | "contacto") => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   // Fast-Track Callback state
   const [isFastTrackOpen, setIsFastTrackOpen] = useState(false);
@@ -110,7 +122,10 @@ export default function App() {
   const t = translations[lang];
 
   return (
-    <div className="relative min-h-screen w-full bg-[#071330] font-sans text-white overflow-x-hidden selection:bg-sky-400 selection:text-slate-950">
+    <div className="relative min-h-screen w-full bg-[#091535] font-sans text-white overflow-x-hidden selection:bg-sky-400 selection:text-slate-950">
+      
+      {/* Dynamic Interactive System & Connection Motion Background */}
+      <SystemConnectionBackground />
       
       {/* BACKGROUND ELEMENTS & GLOW ACCENTS (Brighter, clearer blues as requested: ¡Azul más claro!) */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -142,7 +157,7 @@ export default function App() {
       </div>
 
       {/* FIXED FLOATING CALL TO ACTION HEADER FOR INSTANT CONVERSION */}
-      <header className="sticky top-0 z-40 w-full backdrop-blur-md bg-[#071330]/80 border-b border-white/5 transition-all animate-none">
+      <header className="sticky top-0 z-40 w-full backdrop-blur-md bg-[#091535]/80 border-b border-white/5 transition-all animate-none">
         {/* Slim Scroll Progress Bar */}
         <motion.div
           className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-cyan-400 via-sky-400 to-[#38bdf8] origin-left z-50 shadow-md shadow-cyan-400/20"
@@ -150,8 +165,11 @@ export default function App() {
         />
         <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 h-20 flex items-center justify-between">
           
-          <div className="flex items-center gap-3">
-            <div className="h-9 w-9 rounded-xl bg-gradient-to-tr from-cyan-400 to-sky-400 flex items-center justify-center shadow-lg shadow-cyan-400/15">
+          <div 
+            onClick={() => navigateTo("inicio")} 
+            className="flex items-center gap-3 cursor-pointer select-none group"
+          >
+            <div className="h-9 w-9 rounded-xl bg-gradient-to-tr from-cyan-400 to-sky-400 flex items-center justify-center shadow-lg shadow-cyan-400/15 group-hover:scale-105 transition-transform">
               <Zap className="h-4.5 w-4.5 text-white animate-pulse" />
             </div>
             <div>
@@ -165,12 +183,31 @@ export default function App() {
           </div>
 
           <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-300">
-            <a href="#hero" className="hover:text-white transition-colors">{t.navInicio}</a>
-            <a href="#servicios" className="hover:text-white transition-colors flex items-center gap-1">
+            <button 
+              onClick={() => navigateTo("inicio")} 
+              className={`hover:text-white transition-colors cursor-pointer select-none outline-none ${currentPage === "inicio" ? "text-cyan-400 font-bold border-b border-cyan-400/30 pb-0.5" : ""}`}
+            >
+              {t.navInicio}
+            </button>
+            <button 
+              onClick={() => navigateTo("servicios")} 
+              className={`hover:text-white transition-colors cursor-pointer select-none outline-none flex items-center gap-1 ${currentPage === "servicios" ? "text-cyan-400 font-bold border-b border-cyan-400/30 pb-0.5" : ""}`}
+            >
               <span>{t.navServicios}</span>
               <span className="text-[10px] bg-sky-500/10 text-sky-400 px-1.5 py-0.5 rounded font-mono">IA</span>
-            </a>
-            <a href="#precios" className="hover:text-white transition-colors">{t.navPrecios}</a>
+            </button>
+            <button 
+              onClick={() => navigateTo("precios")} 
+              className={`hover:text-white transition-colors cursor-pointer select-none outline-none ${currentPage === "precios" ? "text-cyan-400 font-bold border-b border-cyan-400/30 pb-0.5" : ""}`}
+            >
+              {t.navPrecios}
+            </button>
+            <button 
+              onClick={() => navigateTo("contacto")} 
+              className={`hover:text-white transition-colors cursor-pointer select-none outline-none ${currentPage === "contacto" ? "text-cyan-400 font-bold border-b border-cyan-400/30 pb-0.5" : ""}`}
+            >
+              {lang === "es" ? "Contacto" : "Contact"}
+            </button>
           </nav>
 
           <div className="flex items-center gap-3 sm:gap-4">
@@ -209,8 +246,8 @@ export default function App() {
             </div>
 
             <button
-              onClick={() => setIsContactOpen(true)}
-              className="relative inline-flex items-center gap-2 rounded-full bg-white/5 hover:bg-white/10 text-white font-medium text-xs sm:text-sm px-4.5 py-2.5 transition-all outline-none border border-white/15"
+              onClick={() => navigateTo("contacto")}
+              className="relative inline-flex items-center gap-2 rounded-full bg-white/5 hover:bg-white/10 text-white font-medium text-xs sm:text-sm px-4.5 py-2.5 transition-all outline-none border border-white/15 cursor-pointer select-none"
             >
               {t.btnComenzar}
               <ArrowUpRight className="h-3.5 w-3.5 text-sky-400" />
@@ -220,8 +257,54 @@ export default function App() {
         </div>
       </header>
 
-      {/* MAIN LAYOUT */}
-      <div className="relative z-10">
+      <AnimatePresence mode="wait">
+        {currentPage === "servicios" && (
+          <ServiciosPage 
+            lang={lang} 
+            onOpenContact={(serviceName) => {
+              navigateTo("contacto");
+            }} 
+          />
+        )}
+
+        {currentPage === "precios" && (
+          <PreciosPage 
+            lang={lang} 
+            currency={currency} 
+            setCurrency={setCurrency} 
+            exchangeRate={EXCHANGE_RATE} 
+            onOpenFastTrack={(planName, waUrl) => {
+              setFastTrackPlan(planName);
+              setFastTrackWaUrl(waUrl);
+              setIsFastTrackOpen(true);
+            }} 
+            onOpenContact={(serviceName) => {
+              navigateTo("contacto");
+            }} 
+          />
+        )}
+
+        {currentPage === "contacto" && (
+          <ContactoPage 
+            lang={lang} 
+            onOpenFastTrack={(planName, waUrl) => {
+              setFastTrackPlan(planName);
+              setFastTrackWaUrl(waUrl);
+              setIsFastTrackOpen(true);
+            }} 
+          />
+        )}
+
+        {currentPage === "inicio" && (
+          <motion.div
+            key="inicio-page"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            {/* MAIN LAYOUT */}
+            <div className="relative z-10">
 
         {/* ==================== SECCIÓN 1: HERO SECCIÓN (Minimalista, Moderno, de Alto Impacto) ==================== */}
         <motion.section
@@ -561,7 +644,7 @@ export default function App() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-120px" }}
-          className="relative py-20 sm:py-28 bg-[#071330] border-b border-white/5"
+          className="relative py-20 sm:py-28 bg-[#091535] border-b border-white/5"
         >
           {/* Subtle Ambient Light Orb to keep typography contrast perfect and stunning */}
           <div className="absolute top-1/2 left-1/3 -translate-y-1/2 w-[300px] h-[300px] rounded-full bg-sky-500/5 blur-[100px] pointer-events-none" />
@@ -1247,7 +1330,7 @@ export default function App() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-120px" }}
-          className="relative py-20 sm:py-28 bg-[#071330]"
+          className="relative py-20 sm:py-28 bg-[#091535]"
         >
           <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 space-y-16">
             
@@ -1546,6 +1629,9 @@ export default function App() {
 
       {/* FAQ SECTION WITH ACCORDIONS */}
       <FaqSection />
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* FOOTER GENERAL */}
       {(() => {
@@ -1600,7 +1686,7 @@ export default function App() {
         };
 
         return (
-          <footer className="relative z-10 border-t border-white/10 bg-[#071330] overflow-hidden pt-20 pb-12">
+          <footer className="relative z-10 border-t border-white/10 bg-[#091535] overflow-hidden pt-20 pb-12">
             {/* Ambient Cyan Soft Glow Behind Footer */}
             <div className="absolute bottom-0 right-1/4 w-[400px] h-[300px] rounded-full bg-cyan-500/5 blur-[120px] pointer-events-none" />
             
@@ -1674,28 +1760,40 @@ export default function App() {
                   </h3>
                   <ul className="space-y-2.5 text-sm text-slate-400">
                     <li>
-                      <a href="#servicios" className="hover:text-cyan-400 transition-colors flex items-center gap-1.5 group">
+                      <button 
+                        onClick={() => navigateTo("servicios")} 
+                        className="hover:text-cyan-400 transition-colors flex items-center gap-1.5 group cursor-pointer outline-none select-none text-left"
+                      >
                         <span className="h-1 w-1 rounded-full bg-cyan-400/40 group-hover:bg-cyan-400 transition-all shrink-0" />
                         <span>{f.webAi}</span>
-                      </a>
+                      </button>
                     </li>
                     <li>
-                      <a href="#servicios" className="hover:text-cyan-400 transition-colors flex items-center gap-1.5 group">
+                      <button 
+                        onClick={() => navigateTo("servicios")} 
+                        className="hover:text-cyan-400 transition-colors flex items-center gap-1.5 group cursor-pointer outline-none select-none text-left"
+                      >
                         <span className="h-1 w-1 rounded-full bg-cyan-400/40 group-hover:bg-cyan-400 transition-all shrink-0" />
                         <span>{f.googleAds}</span>
-                      </a>
+                      </button>
                     </li>
                     <li>
-                      <a href="#precios" className="hover:text-cyan-400 transition-colors flex items-center gap-1.5 group">
+                      <button 
+                        onClick={() => navigateTo("precios")} 
+                        className="hover:text-cyan-400 transition-colors flex items-center gap-1.5 group cursor-pointer outline-none select-none text-left"
+                      >
                         <span className="h-1 w-1 rounded-full bg-cyan-400/40 group-hover:bg-cyan-400 transition-all shrink-0" />
                         <span>{f.croSeo}</span>
-                      </a>
+                      </button>
                     </li>
                     <li>
-                      <a href="#precios-publicidad" className="hover:text-cyan-400 transition-colors flex items-center gap-1.5 group">
+                      <button 
+                        onClick={() => navigateTo("precios")} 
+                        className="hover:text-cyan-400 transition-colors flex items-center gap-1.5 group cursor-pointer outline-none select-none text-left"
+                      >
                         <span className="h-1 w-1 rounded-full bg-cyan-400/40 group-hover:bg-cyan-400 transition-all shrink-0" />
                         <span>{f.funnels}</span>
-                      </a>
+                      </button>
                     </li>
                   </ul>
                 </div>
